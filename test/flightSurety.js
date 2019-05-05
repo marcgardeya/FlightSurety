@@ -159,7 +159,11 @@ contract('Flight Surety Tests', async (accounts) => {
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyData.registerAirline(newAirline, {from: config.firstAirline});
+    try {
+      await config.flightSuretyData.registerAirline(newAirline, {from: config.firstAirline});
+    } catch(e) {
+
+    }
     let result = await config.flightSuretyData.isAirline.call(newAirline); 
 
     // ASSERT
@@ -173,8 +177,12 @@ contract('Flight Surety Tests', async (accounts) => {
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyData.fund2(config.firstAirline);
-    await config.flightSuretyData.registerAirline(newAirline, {from: config.firstAirline});
+    try {
+      await config.flightSuretyData.fund2(config.firstAirline);
+      await config.flightSuretyData.registerAirline(newAirline, {from: config.firstAirline});
+    } catch(e) {
+
+    }
     let result = await config.flightSuretyData.isAirline.call(newAirline); 
 
     // ASSERT

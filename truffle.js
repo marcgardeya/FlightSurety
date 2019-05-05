@@ -1,6 +1,37 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "margin chicken gasp menu credit miss above smile federal tomorrow project crumble";
+var mnemonic = "couple robot nominee possible robust spider culture swap bonus april machine furnace";
+var NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker")
 
+module.exports = {
+  networks: {
+    development: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: "*" // Match any network id
+    },
+    rinkeby: {
+      provider: function () {
+        var wallet = new HDWalletProvider(MNEMONIC, ENDPOINT)
+        var nonceTracker = new NonceTrackerSubprovider()
+        wallet.engine._providers.unshift(nonceTracker)
+        nonceTracker.setEngine(wallet.engine)
+        return wallet
+      },
+      network_id: 4,
+      // gas: 2000000,   // <--- Twice as much
+      // gasPrice: 10000000000,
+    }
+  },
+
+  compilers: {
+    solc: {
+      version: "^0.4.24"
+    }
+  }
+};
+
+
+/*
 module.exports = {
   networks: {
     development: {
@@ -16,3 +47,4 @@ module.exports = {
     }
   }
 };
+*/
