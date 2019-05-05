@@ -122,8 +122,12 @@ contract FlightSuretyData {
         authorizedContracts[contractAddress] = 1;
     }
 
-    function isAirline( address wallet ) external view returns(bool) {
-        return airlines[wallet].isRegistered;
+    function isAirline( address airline ) external view returns(bool) {
+        return airlines[airline].isRegistered;
+    }
+
+    function isFunded( address airline ) external view returns(bool) {
+        return airlines[airline].isFunded;
     }
 
     /********************************************************************************************/
@@ -137,17 +141,19 @@ contract FlightSuretyData {
     */   
     function registerAirline
                             (   
-                                address wallet
+                                address newAirline,
+                                address registeringAirline
                             )
                             external
                             //requireIsCallerAuthorized
     {
-        //require(!airlines[wallet].isRegistered, "Airline is already registered.");
-        require(airlines[msg.sender].isFunded, "Registering airline has to be funded to register another airline");
+        require(!airlines[newAirline].isRegistered, "Airline is already registered.");
+        require(airlines[registeringAirline].isFunded, "Registering airline has to be funded to register another airline");
 
-        airlines[wallet].isRegistered = true;
+        airlines[newAirline].isRegistered = true;
         return;
 
+/*
         // add a vote for this airline
         airlines[wallet].votes += 1;
 
@@ -158,7 +164,9 @@ contract FlightSuretyData {
         (airlines[wallet].votes >= nbParticipatingAirlines/2) ) {
 
             airlines[wallet].isVoted = true;
+            nbParticipatingAirlines += 1;
         }
+ */
     }
 
 
@@ -204,23 +212,20 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */   
-    function fund
-                            (   
-                            )
-                            public
-                            payable
+    function marc( address airline ) external
     {
+        airlines[airline].isFunded = true;
+    }
+
+    //    nbParticipatingAirlines += 1;
+/*
         airlines[msg.sender].funding += msg.value;
         if(airlines[msg.sender].funding >= 1 ether) {
             airlines[msg.sender].isFunded = true;
             nbParticipatingAirlines += 1;
         }
-    }
-
-    function fund2(address wallet) {
-        airlines[wallet].isFunded = true;
-        nbParticipatingAirlines += 1;
-    }
+        */
+    //}
 
     function getFlightKey
                         (

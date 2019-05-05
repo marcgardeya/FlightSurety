@@ -5,7 +5,7 @@ var BigNumber = require('bignumber.js');
 contract('Flight Surety Tests', async (accounts) => {
 
   var config;
-  before('setup contract', async () => {
+  beforeEach('setup contract', async () => {
     config = await Test.Config(accounts);
     await config.flightSuretyData.authorizeCaller(config.flightSuretyApp.address);
   });
@@ -90,7 +90,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  it('(airline) non-registered airline can not register another airline', async () => {
+  it('(airline) unregistered airline must not be able to register another airline', async () => {
     
     // ARRANGE
     let newAirline = accounts[2];
@@ -102,9 +102,68 @@ contract('Flight Surety Tests', async (accounts) => {
       let result = await config.flightSuretyData.isAirline.call(newAirline); 
 
       // ASSERT
-      assert.equal(result, false, "Non-registered airline must not register another airline");
+      assert.equal(result, false, "Unregistered airline must not be able to register another airline");
 
     } catch(e) {}
+
+  });
+*/
+
+  it('(airline) can be funded', async () => {
+      
+    // ARRANGE
+    let newAirline = accounts[2];
+
+    // ACT
+    //await config.flightSuretyApp.marc({from: config.firstAirline});
+    await config.flightSuretyData.marc(config.firstAirline);
+
+    //let result = await config.flightSuretyApp.isFunded.call(config.firstAirline); 
+    let result = await config.flightSuretyData.isFunded.call(config.firstAirline); 
+
+    // ASSERT
+    assert.equal(result, true, "Airline has to be fundable");
+
+  });
+
+  it('(airline) can not register another airline if not funded', async () => {
+    
+    // ARRANGE
+    let newAirline = accounts[2];
+
+    // ACT
+    try {
+      //await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
+      await config.flightSuretyData.registerAirline(newAirline, config.firstAirline );
+    } catch(e) {}
+
+    //let result = await config.flightSuretyApp.isAirline.call(newAirline); 
+    let result = await config.flightSuretyData.isAirline.call(newAirline); 
+
+    // ASSERT
+    assert.equal(result, false, "Airline must not be able to register another airline if it hasn't provided funding");
+
+  });
+
+  it('(airline) can register another airline if funded', async () => {
+    
+    // ARRANGE
+    let newAirline = accounts[2];
+
+    // ACT
+    //try {
+      //await config.flightSuretyApp.marc({from: config.firstAirline});
+      await config.flightSuretyData.marc(config.firstAirline);
+
+      //await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
+      await config.flightSuretyData.registerAirline(newAirline, config.firstAirline );
+    //} catch(e) {}
+
+    //let result = await config.flightSuretyApp.isAirline.call(newAirline); 
+    let result = await config.flightSuretyData.isAirline.call(newAirline); 
+
+    // ASSERT
+    assert.equal(result, true, "Airline has to be able to register another airline if it has provided funding");
 
   });
 
@@ -120,11 +179,12 @@ contract('Flight Surety Tests', async (accounts) => {
     try {
 
       // ACT
-      await config.flightSuretyApp.registerAirline(airline1, {from: config.firstAirline});
-      await config.flightSuretyApp.registerAirline(airline2, {from: config.firstAirline});
-      await config.flightSuretyApp.registerAirline(airline3, {from: config.firstAirline});
-      await config.flightSuretyApp.registerAirline(airline4, {from: config.firstAirline});
-      await config.flightSuretyApp.registerAirline(airline5, {from: config.firstAirline});
+      await config.flightSuretyData.marc(config.firstAirline);
+      await config.flightSuretyData.registerAirline(airline1, {from: config.firstAirline});
+      await config.flightSuretyData.registerAirline(airline2, {from: config.firstAirline});
+      await config.flightSuretyData.registerAirline(airline3, {from: config.firstAirline});
+      await config.flightSuretyData.registerAirline(airline4, {from: config.firstAirline});
+      await config.flightSuretyData.registerAirline(airline5, {from: config.firstAirline});
 
       // ASSERT
       {
@@ -138,9 +198,12 @@ contract('Flight Surety Tests', async (accounts) => {
       }
 
       // ACT
-      await config.flightSuretyApp.registerAirline(airline5, {from: airline1});
-      await config.flightSuretyApp.registerAirline(airline5, {from: airline2});
-      await config.flightSuretyApp.registerAirline(airline5, {from: airline3});
+      await config.flightSuretyData.marc(airline1);
+      await config.flightSuretyData.registerAirline(airline5, {from: airline1});
+      await config.flightSuretyData.marc(airline2);
+      await config.flightSuretyData.registerAirline(airline5, {from: airline2});
+      await config.flightSuretyData.marc(airline3);
+      await config.flightSuretyData.registerAirline(airline5, {from: airline3});
 
       // ASSERT
       {
@@ -151,43 +214,5 @@ contract('Flight Surety Tests', async (accounts) => {
     } catch(e) {}
 
   });
-*/
 
-  it('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
-    
-    // ARRANGE
-    let newAirline = accounts[2];
-
-    // ACT
-    try {
-      await config.flightSuretyData.registerAirline(newAirline, {from: config.firstAirline});
-    } catch(e) {
-
-    }
-    let result = await config.flightSuretyData.isAirline.call(newAirline); 
-
-    // ASSERT
-    assert.equal(result, false, "Airline should not be able to register another airline if it hasn't provided funding");
-
-  });
-
-  it('(airline) can register an Airline using registerAirline() if it is funded', async () => {
-    
-    // ARRANGE
-    let newAirline = accounts[2];
-
-    // ACT
-    try {
-      await config.flightSuretyData.fund2(config.firstAirline);
-      await config.flightSuretyData.registerAirline(newAirline, {from: config.firstAirline});
-    } catch(e) {
-
-    }
-    let result = await config.flightSuretyData.isAirline.call(newAirline); 
-
-    // ASSERT
-    assert.equal(result, true, "Airline should be able to register another airline if it has provided funding");
-
-  });
- 
 });

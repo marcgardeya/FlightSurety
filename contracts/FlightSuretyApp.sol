@@ -94,8 +94,12 @@ contract FlightSuretyApp {
         return flightSuretyData.isOperational();  // Modify to call data contract's status
     }
 
-    function isAirline( address wallet ) public view returns(bool) {
-        return flightSuretyData.isAirline( wallet );
+    function isAirline( address airline ) public view returns(bool) {
+        return flightSuretyData.isAirline( airline );
+    }
+
+    function isFunded( address airline ) public view returns(bool) {
+        return flightSuretyData.isFunded( airline );
     }
 
     /********************************************************************************************/
@@ -109,18 +113,22 @@ contract FlightSuretyApp {
     */   
     function registerAirline
                             (   
-                                address wallet
+                                address newAirline
                             )
                             external
                             view
-                            returns(bool success, uint256 votes)
+                            //returns(bool success, uint256 votes)
     {
-        require(flightSuretyData.isAirline(msg.sender), "Only existing airline may register a new airline.");
+        //require(flightSuretyData.isAirline(msg.sender), "Only existing airline may register a new airline.");
 
-        flightSuretyData.registerAirline(wallet);
-        return (true, 0);
+        flightSuretyData.registerAirline(newAirline, msg.sender);
+        //return (true, 0);
     }
 
+    function marc() external //payable
+    {
+        flightSuretyData.marc(msg.sender);
+    }
 
    /**
     * @dev Register a future flight for insuring.
@@ -350,6 +358,8 @@ contract FlightSuretyApp {
 contract FlightSuretyData {
     function isOperational() public view returns(bool);
     function setOperatingStatus( bool mode ) external;
-    function isAirline( address wallet ) external view returns(bool);
-    function registerAirline( address wallet ) external view;
+    function isAirline( address airline ) external view returns(bool);
+    function isFunded( address airline ) external view returns(bool);
+    function registerAirline( address newAirline, address registeringAirline ) external view;
+    function marc( address airline ) external;
 }
