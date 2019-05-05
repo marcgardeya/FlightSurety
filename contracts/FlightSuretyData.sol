@@ -9,8 +9,21 @@ contract FlightSuretyData {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
+    struct Airline {
+        bool isRegistered;
+
+        uint256 funding;
+        bool isFunded;
+
+        uint256 votes;
+        bool isVoted;
+    }
+
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
+    mapping(address => uint256) private authorizedContracts;            // Mapping for storing authorized contracts
+    mapping(address => Airline) private airlines;                       // Mapping for storing airlines
+    uint256 nbParticipatingAirlines;                                    // Number of participating airlines, i.e. registered and funded
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -23,10 +36,15 @@ contract FlightSuretyData {
     */
     constructor
                                 (
+                                    address firstAirline
                                 ) 
                                 public 
     {
         contractOwner = msg.sender;
+
+        // airline has to be funded to be able to register another airline
+        airlines[firstAirline] = Airline({isRegistered:true,funding:0,isFunded:false,votes:0,isVoted:true});
+        nbParticipatingAirlines = 1;
     }
 
     /********************************************************************************************/
@@ -56,6 +74,12 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier requireIsCallerAuthorized()
+    {
+        require(authorizedContracts[msg.sender] == 1, "Caller is not contract owner");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -73,7 +97,6 @@ contract FlightSuretyData {
         return operational;
     }
 
-
     /**
     * @dev Sets contract operations on/off
     *
@@ -84,9 +107,23 @@ contract FlightSuretyData {
                                 bool mode
                             ) 
                             external
-                            requireContractOwner 
+                            requireContractOwner
     {
         operational = mode;
+    }
+
+    function authorizeCaller
+                            (
+                                address contractAddress
+                            )
+                            external
+                            requireContractOwner
+    {
+        authorizedContracts[contractAddress] = 1;
+    }
+
+    function isAirline( address wallet ) external view returns(bool) {
+        return airlines[wallet].isRegistered;
     }
 
     /********************************************************************************************/
@@ -100,10 +137,28 @@ contract FlightSuretyData {
     */   
     function registerAirline
                             (   
+                                address wallet
                             )
                             external
-                            pure
+                            //requireIsCallerAuthorized
     {
+        //require(!airlines[wallet].isRegistered, "Airline is already registered.");
+        require(airlines[msg.sender].isFunded, "Registering airline has to be funded to register another airline");
+
+        airlines[wallet].isRegistered = true;
+        return;
+
+        // add a vote for this airline
+        airlines[wallet].votes += 1;
+
+        // register a new airline until there are at least four airlines registered
+        if( (nbParticipatingAirlines < 5) ||
+
+        // Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines
+        (airlines[wallet].votes >= nbParticipatingAirlines/2) ) {
+
+            airlines[wallet].isVoted = true;
+        }
     }
 
 
@@ -155,6 +210,16 @@ contract FlightSuretyData {
                             public
                             payable
     {
+        airlines[msg.sender].funding += msg.value;
+        if(airlines[msg.sender].funding >= 1 ether) {
+            airlines[msg.sender].isFunded = true;
+            nbParticipatingAirlines += 1;
+        }
+    }
+
+    function fund2(address wallet) {
+        airlines[wallet].isFunded = true;
+        nbParticipatingAirlines += 1;
     }
 
     function getFlightKey
@@ -174,13 +239,14 @@ contract FlightSuretyData {
     * @dev Fallback function for funding smart contract.
     *
     */
+    /*
     function() 
                             external 
                             payable 
     {
         fund();
     }
-
+*/
 
 }
 

@@ -25,6 +25,7 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
     address private contractOwner;          // Account used to deploy contract
+    FlightSuretyData flightSuretyData;
 
     struct Flight {
         bool isRegistered;
@@ -50,7 +51,7 @@ contract FlightSuretyApp {
     modifier requireIsOperational() 
     {
          // Modify to call data contract's status
-        require(true, "Contract is currently not operational");  
+        require(flightSuretyData.isOperational(), "Contract is currently not operational");  
         _;  // All modifiers require an "_" which indicates where the function body will be added
     }
 
@@ -72,11 +73,13 @@ contract FlightSuretyApp {
     *
     */
     constructor
-                                (
-                                ) 
-                                public 
+                            (
+                                address dataContract
+                            ) 
+                            public 
     {
         contractOwner = msg.sender;
+        flightSuretyData = FlightSuretyData(dataContract);
     }
 
     /********************************************************************************************/
@@ -85,10 +88,14 @@ contract FlightSuretyApp {
 
     function isOperational() 
                             public 
-                            pure 
+                            view
                             returns(bool) 
     {
-        return true;  // Modify to call data contract's status
+        return flightSuretyData.isOperational();  // Modify to call data contract's status
+    }
+
+    function isAirline( address wallet ) public view returns(bool) {
+        return flightSuretyData.isAirline( wallet );
     }
 
     /********************************************************************************************/
@@ -102,12 +109,16 @@ contract FlightSuretyApp {
     */   
     function registerAirline
                             (   
+                                address wallet
                             )
                             external
-                            pure
+                            view
                             returns(bool success, uint256 votes)
     {
-        return (success, 0);
+        require(flightSuretyData.isAirline(msg.sender), "Only existing airline may register a new airline.");
+
+        flightSuretyData.registerAirline(wallet);
+        return (true, 0);
     }
 
 
@@ -335,3 +346,10 @@ contract FlightSuretyApp {
 // endregion
 
 }   
+
+contract FlightSuretyData {
+    function isOperational() public view returns(bool);
+    function setOperatingStatus( bool mode ) external;
+    function isAirline( address wallet ) external view returns(bool);
+    function registerAirline( address wallet ) external view;
+}
