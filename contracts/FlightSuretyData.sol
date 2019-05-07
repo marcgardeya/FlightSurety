@@ -151,7 +151,6 @@ contract FlightSuretyData {
         require(airlines[registeringAirline].isFunded, "Registering airline has to be funded to register another airline");
 
         airlines[newAirline].isRegistered = true;
-        return;
 
 /*
         // add a vote for this airline
@@ -212,7 +211,7 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */   
-    function marc( address airline ) external
+    function addFunding( address airline ) external
     {
         airlines[airline].isFunded = true;
     }

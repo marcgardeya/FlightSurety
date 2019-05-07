@@ -125,9 +125,9 @@ contract FlightSuretyApp {
         //return (true, 0);
     }
 
-    function marc() external //payable
+    function addFunding() external //payable
     {
-        flightSuretyData.marc(msg.sender);
+        flightSuretyData.addFunding(msg.sender);
     }
 
    /**
@@ -361,5 +361,5 @@ contract FlightSuretyData {
     function isAirline( address airline ) external view returns(bool);
     function isFunded( address airline ) external view returns(bool);
     function registerAirline( address newAirline, address registeringAirline ) external view;
-    function marc( address airline ) external;
+    function addFunding( address airline ) external;
 }

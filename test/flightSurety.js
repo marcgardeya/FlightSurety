@@ -115,7 +115,9 @@ contract('Flight Surety Tests', async (accounts) => {
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyData.marc(config.firstAirline);
+    //try {
+      await config.flightSuretyData.addFunding(config.firstAirline);
+    //} catch(e) {}
     let result = await config.flightSuretyData.isFunded.call(config.firstAirline); 
 
     // ASSERT
@@ -145,7 +147,7 @@ contract('Flight Surety Tests', async (accounts) => {
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyData.marc(config.firstAirline);
+    await config.flightSuretyData.addFunding(config.firstAirline);
     await config.flightSuretyData.registerAirline(newAirline, config.firstAirline );
     let result = await config.flightSuretyData.isAirline.call(newAirline); 
 
@@ -160,7 +162,7 @@ contract('Flight Surety Tests', async (accounts) => {
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyApp.marc({from: config.firstAirline});
+    await config.flightSuretyApp.addFunding({from: config.firstAirline});
     let result = await config.flightSuretyApp.isFunded.call(config.firstAirline); 
     
     // ASSERT
@@ -191,7 +193,7 @@ contract('Flight Surety Tests', async (accounts) => {
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyApp.marc({from: config.firstAirline});
+    await config.flightSuretyApp.addFunding({from: config.firstAirline});
     await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
     let result = await config.flightSuretyApp.isAirline.call(newAirline); 
 
