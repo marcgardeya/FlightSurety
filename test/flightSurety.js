@@ -108,7 +108,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 */
-
+/*
   it('data contract - (airline) can be funded', async () => {
       
     // ARRANGE
@@ -116,7 +116,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ACT
     //try {
-      await config.flightSuretyData.addFunding(config.firstAirline);
+      await config.flightSuretyData.addFunding.sendTransaction({from: config.firstAirline});
     //} catch(e) {}
     let result = await config.flightSuretyData.isFunded.call(config.firstAirline); 
 
@@ -186,16 +186,16 @@ contract('Flight Surety Tests', async (accounts) => {
     assert.equal(result, false, "Airline must not be able to register another airline if it hasn't provided funding");
 
   });
-
+*/
   it('app contract - (airline) can register another airline if funded', async () => {
     
     // ARRANGE
     let newAirline = accounts[2];
 
     // ACT
-    await config.flightSuretyApp.addFunding({from: config.firstAirline});
-    await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
-    let result = await config.flightSuretyApp.isAirline.call(newAirline); 
+    await config.flightSuretyApp.addFunding.sendTransaction({from: config.firstAirline});
+    await config.flightSuretyApp.registerAirline.sendTransaction(newAirline, {from: config.firstAirline});
+    let result = await config.flightSuretyApp.isAirline.call(newAirline);
 
     // ASSERT
     assert.equal(result, true, "Airline has to be able to register another airline if it has provided funding");
