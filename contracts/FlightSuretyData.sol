@@ -15,7 +15,7 @@ contract FlightSuretyData {
         uint256 funding;
         bool isFunded;
 
-        uint256 votes;
+        address[] votes;
         bool isVoted;
     }
 
@@ -23,7 +23,7 @@ contract FlightSuretyData {
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
     mapping(address => uint256) private authorizedContracts;            // Mapping for storing authorized contracts
     mapping(address => Airline) private airlines;                       // Mapping for storing airlines
-    uint256 nbParticipatingAirlines;                                    // Number of participating airlines, i.e. registered and funded
+    uint256 nbVotedAirlines;                                            // Number of participating airlines, i.e. registered, funded and voted
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -42,9 +42,8 @@ contract FlightSuretyData {
     {
         contractOwner = msg.sender;
 
-        // airline has to be funded to be able to register another airline
-        airlines[firstAirline] = Airline({isRegistered:true,funding:0,isFunded:false,votes:0,isVoted:true});
-        nbParticipatingAirlines = 1;
+        airlines[firstAirline] = Airline({isRegistered:true,funding:0,isFunded:false,votes:new address[](0),isVoted:true});
+        nbVotedAirlines = 1;
     }
 
     /********************************************************************************************/
@@ -126,6 +125,10 @@ contract FlightSuretyData {
         return airlines[airline].isRegistered;
     }
 
+    function isVotedAirline( address airline ) external view returns(bool) {
+        return airlines[airline].isVoted;
+    }
+
     function isFunded( address airline ) external view returns(bool) {
         return airlines[airline].isFunded;
     }
@@ -145,29 +148,29 @@ contract FlightSuretyData {
                                 address registeringAirline
                             )
                             external
-                            //requireIsCallerAuthorized
-    {
-        require(!airlines[newAirline].isRegistered, "Airline is already registered.");
+                            requireIsCallerAuthorized
+    {        
         require(airlines[registeringAirline].isFunded, "Registering airline has to be funded to register another airline");
+        require(airlines[registeringAirline].isVoted, "Registering airline has to be voted to register another airline");
+
+        // check if registeringAirline has already registered newAirline before
+        bool isDuplicate = false;
+        for(uint r=0; r<airlines[newAirline].votes.length; r++) {
+            if(airlines[newAirline].votes[r] == registeringAirline) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        require(!isDuplicate, "Registering airline has already registered this airline before");
+        airlines[newAirline].votes.push(registeringAirline);
+
+        if( (nbVotedAirlines < 4) || (airlines[newAirline].votes.length >= nbVotedAirlines/2) ) {
+            airlines[newAirline].isVoted = true;
+            nbVotedAirlines += 1;
+        } 
 
         airlines[newAirline].isRegistered = true;
-
-/*
-        // add a vote for this airline
-        airlines[wallet].votes += 1;
-
-        // register a new airline until there are at least four airlines registered
-        if( (nbParticipatingAirlines < 5) ||
-
-        // Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines
-        (airlines[wallet].votes >= nbParticipatingAirlines/2) ) {
-
-            airlines[wallet].isVoted = true;
-            nbParticipatingAirlines += 1;
-        }
- */
     }
-
 
    /**
     * @dev Buy insurance for a flight

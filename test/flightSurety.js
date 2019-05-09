@@ -205,7 +205,6 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  /*
   it('(airline) registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines', async () => {
     
     // ARRANGE
@@ -215,43 +214,47 @@ contract('Flight Surety Tests', async (accounts) => {
     let airline4 = accounts[5];
     let airline5 = accounts[6];
 
+    // ACT
     try {
 
-      // ACT
-      await config.flightSuretyData.marc(config.firstAirline);
-      await config.flightSuretyData.registerAirline(airline1, {from: config.firstAirline});
-      await config.flightSuretyData.registerAirline(airline2, {from: config.firstAirline});
-      await config.flightSuretyData.registerAirline(airline3, {from: config.firstAirline});
-      await config.flightSuretyData.registerAirline(airline4, {from: config.firstAirline});
-      await config.flightSuretyData.registerAirline(airline5, {from: config.firstAirline});
-
-      // ASSERT
-      {
-        let result = await config.flightSuretyData.isAirline.call(airline4); 
-        assert.equal(result, true, "Registered airline may register up to four airlines without multiparty consensus");
-      }
-
-      {
-        let result = await config.flightSuretyData.isAirline.call(airline5); 
-        assert.equal(result, false, "Registered airline may only register up to four airlines without multiparty consensus");  
-      }
-
-      // ACT
-      await config.flightSuretyData.marc(airline1);
-      await config.flightSuretyData.registerAirline(airline5, {from: airline1});
-      await config.flightSuretyData.marc(airline2);
-      await config.flightSuretyData.registerAirline(airline5, {from: airline2});
-      await config.flightSuretyData.marc(airline3);
-      await config.flightSuretyData.registerAirline(airline5, {from: airline3});
-
-      // ASSERT
-      {
-        let result = await config.flightSuretyData.isAirline.call(airline5); 
-        assert.equal(result, true, "Registration of fifth and subsequent airlines must require multi-party consensus");
-      }
+      await config.flightSuretyApp.addFunding.sendTransaction({from:config.firstAirline});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline1, {from: config.firstAirline});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline2, {from: config.firstAirline});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline3, {from: config.firstAirline});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline4, {from: config.firstAirline});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: config.firstAirline});
 
     } catch(e) {}
 
+    // ASSERT
+    {
+      let result = await config.flightSuretyApp.isVotedAirline.call(airline1); 
+      assert.equal(result, true, "Registered airline may register up to four airlines without multiparty consensus");
+    }
+
+    {
+      let result = await config.flightSuretyApp.isVotedAirline.call(airline5); 
+      assert.equal(result, false, "Registration of fifth and subsequent airlines must require multi-party consensus");
+    }
+
+    // ACT
+    try {
+
+      await config.flightSuretyApp.addFunding.sendTransaction({from:airline1});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: airline1});
+
+      await config.flightSuretyApp.addFunding.sendTransaction({from:airline2});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: airline2});
+
+      await config.flightSuretyApp.addFunding.sendTransaction({from:airline3});
+      await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: airline3});
+
+    } catch(e) {}
+
+    // ASSERT
+    {
+      let result = await config.flightSuretyApp.isVotedAirline.call(airline5); 
+      assert.equal(result, true, "Registration of fifth and subsequent airlines by multi-party consensus expected");
+    }
   });
-*/
 });

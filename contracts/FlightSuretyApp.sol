@@ -98,6 +98,10 @@ contract FlightSuretyApp {
         return flightSuretyData.isAirline( airline );
     }
 
+    function isVotedAirline( address airline ) public view returns(bool) {
+        return flightSuretyData.isVotedAirline( airline );
+    }
+
     function isFunded( address airline ) public view returns(bool) {
         return flightSuretyData.isFunded( airline );
     }
@@ -117,12 +121,12 @@ contract FlightSuretyApp {
                             )
                             external
                             view
-                            //returns(bool success, uint256 votes)
+                            returns(bool success, uint256 votes)
     {
-        //require(flightSuretyData.isAirline(msg.sender), "Only existing airline may register a new airline.");
+        require(flightSuretyData.isAirline(msg.sender), "Only existing airline may register a new airline.");
 
         flightSuretyData.registerAirline(newAirline, msg.sender);
-        //return (true, 0);
+        return (true, 0);
     }
 
     function addFunding() external //payable
@@ -359,7 +363,8 @@ contract FlightSuretyData {
     function isOperational() public view returns(bool);
     function setOperatingStatus( bool mode ) external;
     function isAirline( address airline ) external view returns(bool);
+    function isVotedAirline( address airline ) external view returns(bool);
     function isFunded( address airline ) external view returns(bool);
-    function registerAirline( address newAirline, address registeringAirline ) external view;
+    function registerAirline( address newAirline, address registerinAirline ) external view;
     function addFunding( address airline ) external;
 }
