@@ -12,7 +12,7 @@ contract FlightSuretyData {
     struct Airline {
         bool isRegistered;
 
-        uint256 funding;
+        address wallet;
         bool isFunded;
 
         address[] votes;
@@ -42,7 +42,7 @@ contract FlightSuretyData {
     {
         contractOwner = msg.sender;
 
-        airlines[firstAirline] = Airline({isRegistered:true,funding:0,isFunded:false,votes:new address[](0),isVoted:true});
+        airlines[firstAirline] = Airline({isRegistered:true,wallet:firstAirline,isFunded:false,votes:new address[](0),isVoted:true});
         nbVotedAirlines = 1;
     }
 
@@ -170,6 +170,7 @@ contract FlightSuretyData {
         } 
 
         airlines[newAirline].isRegistered = true;
+        airlines[newAirline].wallet = newAirline;
     }
 
    /**
@@ -214,8 +215,10 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */   
-    function addFunding( address airline ) external
+    function fund( address airline, uint256 value ) external payable
     {
+        require(value >= 10 ether);
+        airline.transfer(msg.value);        
         airlines[airline].isFunded = true;
     }
 

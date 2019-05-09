@@ -1,5 +1,5 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "inherit adult display wall manage slender interest twin viable laundry page tenant";
+var mnemonic = "action rule orphan cherry gravity knife convince blossom peace truck glare able";
 var NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker")
 
 module.exports = {
