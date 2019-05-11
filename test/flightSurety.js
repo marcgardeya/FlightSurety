@@ -163,7 +163,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ACT
     try {
-      await config.flightSuretyApp.fund.sendTransaction({from: config.firstAirline, value:10*config.weiMultiple});
+      await config.flightSuretyApp.addFunding.sendTransaction({from: config.firstAirline, value:10*config.weiMultiple});
     } catch(e) {}
     let result = await config.flightSuretyApp.isFunded.call(config.firstAirline); 
     
@@ -195,7 +195,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ACT
     try {
-      await config.flightSuretyApp.fund.sendTransaction({from: config.firstAirline, value:10*config.weiMultiple});
+      await config.flightSuretyApp.addFunding.sendTransaction({from: config.firstAirline, value:10*config.weiMultiple});
       await config.flightSuretyApp.registerAirline.sendTransaction(newAirline, {from: config.firstAirline});
     } catch(e) {}
     let result = await config.flightSuretyApp.isAirline.call(newAirline);
@@ -217,7 +217,7 @@ contract('Flight Surety Tests', async (accounts) => {
     // ACT
     try {
 
-      await config.flightSuretyApp.fund.sendTransaction({from:config.firstAirline, value:10*config.weiMultiple});
+      await config.flightSuretyApp.addFunding.sendTransaction({from:config.firstAirline, value:10*config.weiMultiple});
       await config.flightSuretyApp.registerAirline.sendTransaction(airline1, {from: config.firstAirline});
       await config.flightSuretyApp.registerAirline.sendTransaction(airline2, {from: config.firstAirline});
       await config.flightSuretyApp.registerAirline.sendTransaction(airline3, {from: config.firstAirline});
@@ -240,13 +240,13 @@ contract('Flight Surety Tests', async (accounts) => {
     // ACT
     try {
 
-      await config.flightSuretyApp.fund.sendTransaction({from:airline1, value:10*config.weiMultiple});
+      await config.flightSuretyApp.addFunding.sendTransaction({from:airline1, value:10*config.weiMultiple});
       await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: airline1});
 
-      await config.flightSuretyApp.fund.sendTransaction({from:airline2, value:10*config.weiMultiple});
+      await config.flightSuretyApp.addFunding.sendTransaction({from:airline2, value:10*config.weiMultiple});
       await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: airline2});
 
-      await config.flightSuretyApp.fund.sendTransaction({from:airline3, value:10*config.weiMultiple});
+      await config.flightSuretyApp.addFunding.sendTransaction({from:airline3, value:10*config.weiMultiple});
       await config.flightSuretyApp.registerAirline.sendTransaction(airline5, {from: airline3});
 
     } catch(e) {}

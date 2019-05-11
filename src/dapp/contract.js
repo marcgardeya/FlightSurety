@@ -1,4 +1,4 @@
-import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
+import FlightSuretyApp from '../../../FlightSurety/build/contracts/FlightSuretyApp.json';
 import Config from './config.json';
 import Web3 from 'web3';
 

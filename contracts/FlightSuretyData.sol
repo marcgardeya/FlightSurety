@@ -215,22 +215,12 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */   
-    function fund( address airline, uint256 value ) external payable
+    function addFunding( address airline, uint256 value ) external payable
     {
         require(value >= 10 ether);
         airline.transfer(msg.value);        
         airlines[airline].isFunded = true;
     }
-
-    //    nbParticipatingAirlines += 1;
-/*
-        airlines[msg.sender].funding += msg.value;
-        if(airlines[msg.sender].funding >= 1 ether) {
-            airlines[msg.sender].isFunded = true;
-            nbParticipatingAirlines += 1;
-        }
-        */
-    //}
 
     function getFlightKey
                         (
@@ -249,14 +239,12 @@ contract FlightSuretyData {
     * @dev Fallback function for funding smart contract.
     *
     */
-    /*
+
     function() 
                             external 
                             payable 
     {
-        fund();
+        //fund();
     }
-*/
-
 }
 
