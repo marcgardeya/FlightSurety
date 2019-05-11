@@ -257,4 +257,12 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(result, true, "Registration of fifth and subsequent airlines by multi-party consensus expected");
     }
   });
-});
+
+  it('(passenger) can buy insurance', async () => {
+
+    let passenger = accounts[6];
+
+    await config.flightSuretyApp.buyInsurance.sendTransaction("LH1", {from: passenger, value:1*config.weiMultiple});
+  });
+
+  });

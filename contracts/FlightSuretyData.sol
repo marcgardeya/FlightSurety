@@ -25,6 +25,8 @@ contract FlightSuretyData {
     mapping(address => Airline) private airlines;                       // Mapping for storing airlines
     uint256 nbVotedAirlines;                                            // Number of participating airlines, i.e. registered, funded and voted
 
+    mapping(uint256 => uint256) private insurances;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -183,7 +185,9 @@ contract FlightSuretyData {
                             external
                             payable
     {
-
+        //require(msg.value <= 1 ether);
+        //uint256 flight = 1; // Some flight ID
+        //insurances[flight] = msg.value;
     }
 
     /**
@@ -218,8 +222,14 @@ contract FlightSuretyData {
     function addFunding( address airline, uint256 value ) external payable
     {
         require(value >= 10 ether);
-        airline.transfer(msg.value);        
         airlines[airline].isFunded = true;
+
+/*
+        require(balance[msg.sender] > 0);
+uint256 prev = balance[msg.sender];
+balance[msg.sender] = 0;
+msg.sender.transfer(prev);
+*/
     }
 
     function getFlightKey
@@ -244,7 +254,6 @@ contract FlightSuretyData {
                             external 
                             payable 
     {
-        //fund();
     }
 }
 

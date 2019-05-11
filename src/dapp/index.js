@@ -26,6 +26,17 @@ import './flightsurety.css';
             });
         })
     
+
+        // User-submitted transaction
+        DOM.elid('submit-purchase').addEventListener('click', () => {
+            var e = document.getElementById("flight-selection");
+            var flight = e.options[e.selectedIndex].value;
+            // Write transaction
+            contract.buyInsurance(flight, (error, result) => {
+                display('Passenger', 'Buy insurance', [ { label: 'Buy insurance Status', error: error, value: 'unknown value'} ]);
+            });
+        })
+    
     });
     
 

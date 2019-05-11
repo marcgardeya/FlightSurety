@@ -53,4 +53,16 @@ export default class Contract {
                 callback(error, payload);
             });
     }
+
+    buyInsurance(flight, callback) {
+        let self = this;
+        let payload = {
+            flight: flight
+        } 
+        self.flightSuretyApp.methods
+            .buyInsurance(payload.flight)
+            .send({ from: self.owner}, (error, result) => {
+                callback(error, payload);
+            });
+    }
 }

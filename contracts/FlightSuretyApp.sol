@@ -140,13 +140,20 @@ contract FlightSuretyApp {
     */  
     function registerFlight
                                 (
+                                    bytes32 flightnumber,
+                                    address airline
                                 )
                                 external
-                                pure
     {
-
+        flights[flightnumber].isRegistered = true;
+        flights[flightnumber].statusCode   = STATUS_CODE_UNKNOWN;
+        flights[flightnumber].airline      = airline;
     }
     
+    function buyInsurance( string flightnumber ) external payable {
+        flightSuretyData.buy();
+    }
+
    /**
     * @dev Called after oracle has updated flight status
     *
@@ -367,4 +374,5 @@ contract FlightSuretyData {
     function isFunded( address airline ) external view returns(bool);
     function registerAirline( address newAirline, address registerinAirline ) external view;
     function addFunding( address airline, uint256 value ) external payable;
+    function buy() external payable;
 }
