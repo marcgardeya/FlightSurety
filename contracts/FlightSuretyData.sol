@@ -19,13 +19,18 @@ contract FlightSuretyData {
         bool isVoted;
     }
 
+    struct Insurance {
+        address passenger;
+        uint256 value;
+    }
+
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
     mapping(address => uint256) private authorizedContracts;            // Mapping for storing authorized contracts
     mapping(address => Airline) private airlines;                       // Mapping for storing airlines
     uint256 nbVotedAirlines;                                            // Number of participating airlines, i.e. registered, funded and voted
 
-    mapping(uint256 => uint256) private insurances;
+    mapping(bytes32 => Insurance) private insurances;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -180,14 +185,19 @@ contract FlightSuretyData {
     *
     */   
     function buy
-                            (                             
+                            (        
+                                address airline,
+                                string flight,
+                                uint256 timestamp
                             )
                             external
                             payable
     {
-        //require(msg.value <= 1 ether);
-        //uint256 flight = 1; // Some flight ID
-        //insurances[flight] = msg.value;
+        require(msg.value <= 1 ether);
+
+        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        insurances[flightKey].passenger = msg.sender;
+        insurances[flightKey].value     = msg.value;
     }
 
     /**

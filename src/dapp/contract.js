@@ -57,10 +57,12 @@ export default class Contract {
     buyInsurance(flight, callback) {
         let self = this;
         let payload = {
-            flight: flight
+            airline: self.airlines[0],
+            flight: flight,
+            timestamp: Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
-            .buyInsurance(payload.flight)
+            .buyInsurance(payload.airline, payload.flight, payload.timestamp)
             .send({ from: self.owner}, (error, result) => {
                 callback(error, payload);
             });

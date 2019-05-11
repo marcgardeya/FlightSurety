@@ -150,8 +150,14 @@ contract FlightSuretyApp {
         flights[flightnumber].airline      = airline;
     }
     
-    function buyInsurance( string flightnumber ) external payable {
-        flightSuretyData.buy();
+    function buyInsurance
+                            (                             
+                                address airline,
+                                string flight,
+                                uint256 timestamp                            
+                            ) external payable {
+
+        flightSuretyData.buy(airline, flight, timestamp);
     }
 
    /**
@@ -374,5 +380,5 @@ contract FlightSuretyData {
     function isFunded( address airline ) external view returns(bool);
     function registerAirline( address newAirline, address registerinAirline ) external view;
     function addFunding( address airline, uint256 value ) external payable;
-    function buy() external payable;
+    function buy(address airline, string flight, uint256 timestamp ) external payable;
 }
