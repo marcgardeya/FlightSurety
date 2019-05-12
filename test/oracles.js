@@ -1,8 +1,7 @@
 
 var Test = require('../config/testConfig.js');
-//var BigNumber = require('bignumber.js');
+var BigNumber = require('bignumber.js');
 
-/*
 contract('Oracles', async (accounts) => {
 
   const TEST_ORACLES_COUNT = 20;
@@ -30,7 +29,7 @@ contract('Oracles', async (accounts) => {
     for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
       await config.flightSuretyApp.registerOracle({ from: accounts[a], value: fee });
       let result = await config.flightSuretyApp.getMyIndexes.call({from: accounts[a]});
-      console.log(`Oracle Registered: ${result[0]}, ${result[1]}, ${result[2]}`);
+      console.log(`Oracle Registered with indices: ${result[0]}, ${result[1]}, ${result[2]}`);
     }
   });
 
@@ -42,6 +41,7 @@ contract('Oracles', async (accounts) => {
 
     // Submit a request for oracles to get status information for a flight
     await config.flightSuretyApp.fetchFlightStatus(config.firstAirline, flight, timestamp);
+    //let senderIndexes = await config.flightSuretyApp.getMyIndexes.call({ from: config.firstAirline});
     // ACT
 
     // Since the Index assigned to each test account is opaque by design
@@ -54,9 +54,13 @@ contract('Oracles', async (accounts) => {
       let oracleIndexes = await config.flightSuretyApp.getMyIndexes.call({ from: accounts[a]});
       for(let idx=0;idx<3;idx++) {
 
+        //let isIn = ((idx == oracleIndexes[0].toNumber()) || (idx == oracleIndexes[1].toNumber()) || (idx == oracleIndexes[2].toNumber()));
+        //console.log('', idx, 'is', (isIn?'':'not'), 'in {', oracleIndexes[0].toNumber(), oracleIndexes[1].toNumber(), oracleIndexes[2].toNumber(), '}');
+
         try {
           // Submit a response...it will only be accepted if there is an Index match
-          await config.flightSuretyApp.submitOracleResponse(oracleIndexes[idx], config.firstAirline, flight, timestamp, STATUS_CODE_ON_TIME, { from: accounts[a] });
+          await config.flightSuretyApp.submitOracleResponse(oracleIndexes[idx], config.firstAirline, flight, timestamp, 10, { from: accounts[a] });
+          console.log('\OK', idx, oracleIndexes[idx].toNumber(), flight, timestamp);
 
         }
         catch(e) {
@@ -73,4 +77,3 @@ contract('Oracles', async (accounts) => {
 
  
 });
-*/
