@@ -7,31 +7,38 @@ var BigNumber = require('bignumber.js');
 
 let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
-web3.eth.defaultAccount = web3.eth.accounts[0];
-let accounts = web3.eth.accounts;
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
 
-// Upon startup, 20+ oracles are registered and their assigned indexes are persisted in memory
-let fee = flightSuretyApp.REGISTRATION_FEE;
-let oracleIndexes = new Array();
+web3.eth.getAccounts().then(e => {
 
-for(let a=1; a<3; a++) {      
-  flightSuretyApp.methods
-  .registerOracle()
-  .send({ from: accounts[a], value: fee * (new BigNumber(10)).pow(18) }, (error, result) => {
-    console.log("Error =", error)
-    console.log("Result =", result)
+  let accounts = e;
 
+  // Upon startup, 20+ oracles are registered and their assigned indexes are persisted in memory
+  let fee = 1; //flightSuretyApp.REGISTRATION_FEE.call();
+  let oracleIndexes = new Array();
+  let toWei = (new BigNumber(10)).pow(18);
+
+  for(let a=1; a<3; a++) {      
+    console.log("account ", a, "=", accounts[a])
+    console.log("value =", fee, "*", toWei)
+    
     flightSuretyApp.methods
-    .getMyIndexes()
-    .call({from: accounts[a]}, (error, result) => { 
-      oracleIndexes[a] = result; 
-      console.log('Oracle indexes: ', oracleIndexes)
-    })
+    .registerOracle()
+    .send({ from:accounts[a], value:fee*toWei, gas:3000000 }, (error, result) => {
 
-    console.log('oracles registered: ', a)
-  });
-}
+      flightSuretyApp.methods
+      .getMyIndexes()
+      .call({from: accounts[a]}, (error, result) => { 
+
+        oracleIndexes[a] = result; 
+        console.log('Oracle indexes: ', oracleIndexes)
+      })
+
+    });
+    
+  }
+
+});
 
 
 flightSuretyApp.events.OracleRequest({
