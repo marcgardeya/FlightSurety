@@ -18,7 +18,7 @@ web3.eth.getAccounts().then(e => {
   let oracleIndexes = new Array();
   let toWei = (new BigNumber(10)).pow(18);
 
-  for(let a=1; a<3; a++) {      
+  for(let a=1; a<=20; a++) {      
     console.log("account ", a, "=", accounts[a])
     console.log("value =", fee, "*", toWei)
     

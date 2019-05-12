@@ -1,5 +1,5 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "simple excite drift effort unable salute index deny bring donkey long armed";
+var mnemonic = "service top spot rhythm crawl peasant engine harvest bench goddess frequent pizza";
 var NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker")
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
       host: "127.0.0.1",
       port: 7545,
       network_id: "*", // Match any network id
-      gas: 7000000
+      gas: 6000000
     },
     rinkeby: {
       provider: function () {
