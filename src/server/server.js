@@ -9,13 +9,14 @@ let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
 
+let oracleIndexes = new Array();
+
 web3.eth.getAccounts().then(e => {
 
   let accounts = e;
 
   // Upon startup, 20+ oracles are registered and their assigned indexes are persisted in memory
   let fee = 1; //flightSuretyApp.REGISTRATION_FEE.call();
-  let oracleIndexes = new Array();
   let toWei = (new BigNumber(10)).pow(18);
 
   for(let a=1; a<=20; a++) {      
@@ -51,10 +52,20 @@ flightSuretyApp.events.OracleRequest({
     // identify those oracles for which the OracleRequest event applies,
     // and respond by calling into FlightSuretyApp contract 
     // with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50)
-    for(let a=1; a<20; a++) {
-      //flightSuretyApp.methods.submitOracleResponse.call(oracleIndexes[a], event.returnValues('airline'), event.returnValues('flight'), event.returnValues('timestamp'), 10);
+    for(let a=1; a<=20; a++) {
+      var requestedIndex = event.returnValues['index'];
+      var statusCode = getRandomIntInclusive(0,5) * 10;
+      if( (requestedIndex == oracleIndexes[0]) || (requestedIndex == oracleIndexes[1]) || (requestedIndex == oracleIndexes[2]) ) {
+        flightSuretyApp.methods.submitOracleResponse(requestedIndex, event.returnValues('airline'), event.returnValues('flight'), event.returnValues('timestamp'), statusCode);
+      }
     }
 });
+
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+}
 
 
 const app = express();
