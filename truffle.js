@@ -1,13 +1,14 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "action rule orphan cherry gravity knife convince blossom peace truck glare able";
+var mnemonic = "draft sunset crew ordinary soul match evidence oven mutual ask wife soap";
 var NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker")
 
 module.exports = {
   networks: {
     development: {
       host: "127.0.0.1",
-      port: 8545,
-      network_id: "*" // Match any network id
+      port: 7545,
+      network_id: "*", // Match any network id
+      gas: 4600000
     },
     rinkeby: {
       provider: function () {

@@ -22,6 +22,7 @@ contract FlightSuretyData {
     struct Insurance {
         address passenger;
         uint256 value;
+        uint256 credit;
     }
 
     address private contractOwner;                                      // Account used to deploy contract
@@ -30,7 +31,7 @@ contract FlightSuretyData {
     mapping(address => Airline) private airlines;                       // Mapping for storing airlines
     uint256 nbVotedAirlines;                                            // Number of participating airlines, i.e. registered, funded and voted
 
-    mapping(bytes32 => Insurance) private insurances;
+    mapping(bytes32 => Insurance[]) private insurances;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -196,8 +197,7 @@ contract FlightSuretyData {
         require(msg.value <= 1 ether);
 
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        insurances[flightKey].passenger = msg.sender;
-        insurances[flightKey].value     = msg.value;
+        insurances[flightKey].push( Insurance({passenger:msg.sender, value:msg.value, credit:0}) );
     }
 
     /**
@@ -205,10 +205,16 @@ contract FlightSuretyData {
     */
     function creditInsurees
                                 (
+                                    address airline,
+                                    string flight,
+                                    uint256 timestamp
                                 )
                                 external
-                                pure
     {
+        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        for( uint256 p=0; p<insurances[flightKey].length; p++ ) {
+            insurances[flightKey][p].credit = insurances[flightKey][p].value + insurances[flightKey][p].value / 2;        
+        }
     }
     
 
@@ -218,10 +224,16 @@ contract FlightSuretyData {
     */
     function pay
                             (
+                                    address airline,
+                                    string flight,
+                                    uint256 timestamp
                             )
                             external
-                            pure
     {
+        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        for( uint256 p=0; p<insurances[flightKey].length; p++ ) {
+            //insurances[flightKey][p].passenger.transfer( insurances[flightKey][p].credit );        
+        }
     }
 
    /**
@@ -233,13 +245,6 @@ contract FlightSuretyData {
     {
         require(value >= 10 ether);
         airlines[airline].isFunded = true;
-
-/*
-        require(balance[msg.sender] > 0);
-uint256 prev = balance[msg.sender];
-balance[msg.sender] = 0;
-msg.sender.transfer(prev);
-*/
     }
 
     function getFlightKey

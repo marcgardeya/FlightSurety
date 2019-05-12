@@ -159,6 +159,26 @@ contract FlightSuretyApp {
 
         flightSuretyData.buy(airline, flight, timestamp);
     }
+    
+    function creditInsurees
+                            (                             
+                                address airline,
+                                string flight,
+                                uint256 timestamp                            
+                            ) external {
+
+        flightSuretyData.creditInsurees(airline, flight, timestamp);
+    }
+    
+    function pay
+                            (                             
+                                address airline,
+                                string flight,
+                                uint256 timestamp                            
+                            ) external {
+
+        flightSuretyData.pay(airline, flight, timestamp);
+    }
 
    /**
     * @dev Called after oracle has updated flight status
@@ -174,6 +194,10 @@ contract FlightSuretyApp {
                                 internal
                                 pure
     {
+        if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
+            bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+
+        }
     }
 
 
@@ -381,4 +405,6 @@ contract FlightSuretyData {
     function registerAirline( address newAirline, address registerinAirline ) external view;
     function addFunding( address airline, uint256 value ) external payable;
     function buy(address airline, string flight, uint256 timestamp ) external payable;
+    function creditInsurees(address airline, string flight, uint256 timestamp ) external payable;
+    function pay(address airline, string flight, uint256 timestamp ) external payable;
 }
