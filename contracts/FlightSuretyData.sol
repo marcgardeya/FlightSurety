@@ -193,7 +193,7 @@ contract FlightSuretyData {
                             )
                             external
                             payable
-                            requireIsCallerAuthorized
+                            //requireIsCallerAuthorized
     {
         // data contract behaves just like a database
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
