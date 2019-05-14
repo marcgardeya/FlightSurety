@@ -155,9 +155,11 @@ contract FlightSuretyApp {
                                 address airline,
                                 string flight,
                                 uint256 timestamp                            
-                            ) external payable {
-
-        flightSuretyData.buy(airline, flight, timestamp);
+                            ) external payable 
+    {
+        // business logic goes to the app contract
+        require(msg.value <= 1 ether);
+        flightSuretyData.buyInsurance(airline, flight, timestamp);
     }
     
     function creditInsurees
@@ -402,7 +404,7 @@ contract FlightSuretyData {
     function isFunded( address airline ) external view returns(bool);
     function registerAirline( address newAirline, address registerinAirline ) external view;
     function addFunding( address airline, uint256 value ) external payable;
-    function buy(address airline, string flight, uint256 timestamp ) external payable;
+    function buyInsurance(address airline, string flight, uint256 timestamp ) external payable;
     function creditInsurees(address airline, string flight, uint256 timestamp ) external payable;
     function pay(address airline, string flight, uint256 timestamp ) external payable;
 }

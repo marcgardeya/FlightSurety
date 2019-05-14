@@ -185,7 +185,7 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy
+    function buyInsurance
                             (        
                                 address airline,
                                 string flight,
@@ -193,9 +193,9 @@ contract FlightSuretyData {
                             )
                             external
                             payable
+                            requireIsCallerAuthorized
     {
-        require(msg.value <= 1 ether);
-
+        // data contract behaves just like a database
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         insurances[flightKey].push( Insurance({passenger:msg.sender, value:msg.value, credit:0}) );
     }

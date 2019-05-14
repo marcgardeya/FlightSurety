@@ -2,6 +2,8 @@ import FlightSuretyApp from '../../../FlightSurety/build/contracts/FlightSuretyA
 import Config from './config.json';
 import Web3 from 'web3';
 
+var BigNumber = require('bignumber.js');
+
 export default class Contract {
     constructor(network, callback) {
 
@@ -63,7 +65,7 @@ export default class Contract {
         } 
         self.flightSuretyApp.methods
             .buyInsurance(payload.airline, payload.flight, payload.timestamp)
-            .send({ from: self.owner}, (error, result) => {
+            .send({ from: self.owner, value:1*(new BigNumber(10)).pow(18)}, (error, result) => {
                 callback(error, payload);
             });
     }
