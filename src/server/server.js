@@ -32,7 +32,7 @@ web3.eth.getAccounts().then(e => {
       .call({from: accounts[a]}, (error, result) => { 
 
         oracleIndexes[a] = result; 
-        console.log('Oracle indexes: ', oracleIndexes)
+        console.log('oracle #', a, ': indices =', oracleIndexes[a])
       })
 
     });
@@ -53,10 +53,15 @@ flightSuretyApp.events.OracleRequest({
     // and respond by calling into FlightSuretyApp contract 
     // with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50)
     for(let a=1; a<=20; a++) {
+      if(!oracleIndexes[a]) {break;}
+
       var requestedIndex = event.returnValues['index'];
       var statusCode = getRandomIntInclusive(0,5) * 10;
-      if( (requestedIndex == oracleIndexes[0]) || (requestedIndex == oracleIndexes[1]) || (requestedIndex == oracleIndexes[2]) ) {
-        flightSuretyApp.methods.submitOracleResponse(requestedIndex, event.returnValues('airline'), event.returnValues('flight'), event.returnValues('timestamp'), statusCode);
+      var isApplicable = ( (requestedIndex == oracleIndexes[a][0]) || (requestedIndex == oracleIndexes[a][1]) || (requestedIndex == oracleIndexes[a][2]) );
+
+      console.log('oracle #', a, ': ', requestedIndex, (isApplicable?' is':'not'), 'in', oracleIndexes[a], (isApplicable?'=> submit status code':''), (isApplicable?statusCode:''))
+      if( isApplicable ) {
+        flightSuretyApp.methods.submitOracleResponse(requestedIndex, event.returnValues['airline'], event.returnValues['flight'], event.returnValues['timestamp'], statusCode);
       }
     }
 });
