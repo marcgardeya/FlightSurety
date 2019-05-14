@@ -29,10 +29,14 @@ import './flightsurety.css';
 
         // User-submitted transaction
         DOM.elid('submit-purchase').addEventListener('click', () => {
-            var e = document.getElementById("flight-selection");
-            var flight = e.options[e.selectedIndex].value;
+            var f = document.getElementById("flight-selection");
+            var flight = f.options[f.selectedIndex].value;
+            var d = document.getElementById("day-selection");
+            var timestamp = d.options[d.selectedIndex].value;
+            var v = DOM.elid('insurance-value').value;
+            var value = parseFloat( v );
             // Write transaction
-            contract.buyInsurance(flight, (error, result) => {
+            contract.buyInsurance(flight, timestamp, value, (error, result) => {
                 display('Passenger', 'Buy insurance', [ { label: 'Buy insurance Status', error: error, value: 'unknown value'} ]);
             });
         })
