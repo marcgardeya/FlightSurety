@@ -167,9 +167,12 @@ contract FlightSuretyApp {
                                 address airline,
                                 string flight,
                                 uint256 timestamp                            
-                            ) external {
-
-        flightSuretyData.creditInsurees(airline, flight, timestamp);
+                            ) internal {
+        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        uint8 statusCode = flights[flightKey].statusCode;
+        if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
+            flightSuretyData.creditInsurees(airline, flight, timestamp);
+        }
     }
     
     function pay
@@ -197,7 +200,7 @@ contract FlightSuretyApp {
     {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         flights[flightKey].statusCode = statusCode;
-//        if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
+        creditInsurees( airline, flight, timestamp );
     }
 
 

@@ -232,7 +232,11 @@ contract FlightSuretyData {
     {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         for( uint256 p=0; p<insurances[flightKey].length; p++ ) {
-            //insurances[flightKey][p].passenger.transfer( insurances[flightKey][p].credit );        
+            if( insurances[flightKey][p].credit > 0 ) {
+                uint256 credit = insurances[flightKey][p].credit;
+                insurances[flightKey][p].credit = 0;
+                insurances[flightKey][p].passenger.transfer(credit);        
+            }                
         }
     }
 
