@@ -167,7 +167,7 @@ contract FlightSuretyApp {
                                 address airline,
                                 string flight,
                                 uint256 timestamp                            
-                            ) internal {
+                            ) public {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         uint8 statusCode = flights[flightKey].statusCode;
         if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
