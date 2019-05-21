@@ -20,7 +20,6 @@ import './flightsurety.css';
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
             let flight = "1"; //DOM.elid('flight-number').value;
-            // Write transaction
             contract.fetchFlightStatus(flight, (error, result) => {
                 display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
             });
@@ -35,9 +34,22 @@ import './flightsurety.css';
             var timestamp = d.options[d.selectedIndex].value;
             var v = DOM.elid('insurance-value').value;
             var value = parseFloat( v );
-            // Write transaction
             contract.buyInsurance(flight, timestamp, value, (error, result) => {
-                display('Passenger', 'Buy insurance', [ { label: 'Buy insurance Status', error: error, value: 'unknown value'} ]);
+                display('Passenger', 'Buy insurance', [ { label: 'Transaction', error: error, value: result} ]);
+            });
+        })
+    
+
+        // Withdraw refund
+        DOM.elid('withdraw-refund').addEventListener('click', () => {
+            var f = document.getElementById("flight-selection");
+            var flight = f.options[f.selectedIndex].value;
+            var d = document.getElementById("day-selection");
+            var timestamp = d.options[d.selectedIndex].value;
+            var v = DOM.elid('insurance-value').value;
+            var value = parseFloat( v );
+            contract.pay(flight, timestamp, value, (error, result) => {
+                display('Passenger', 'Withdraw refund', [ { label: 'Transaction', error: error, value: result} ]);
             });
         })
     

@@ -197,7 +197,7 @@ contract FlightSuretyData {
     {
         // data contract behaves just like a database
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        insurances[flightKey].push( Insurance({passenger:msg.sender, value:msg.value, credit:0}) );
+        insurances[flightKey].push( Insurance({passenger:msg.sender, value:msg.value, credit:msg.value}) );
     }
 
     /**

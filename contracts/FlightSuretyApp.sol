@@ -155,7 +155,7 @@ contract FlightSuretyApp {
                                 address airline,
                                 string flight,
                                 uint256 timestamp                            
-                            ) external payable 
+                            ) external payable
     {
         // business logic goes to the app contract
         require(msg.value <= 1 ether);
@@ -167,12 +167,15 @@ contract FlightSuretyApp {
                                 address airline,
                                 string flight,
                                 uint256 timestamp                            
-                            ) public {
+                            ) public returns(bool rc) {
+        rc = false;
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         uint8 statusCode = flights[flightKey].statusCode;
-        if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
-            flightSuretyData.creditInsurees(airline, flight, timestamp);
+        //if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
+        if(true) {    flightSuretyData.creditInsurees(airline, flight, timestamp);
+            rc = true;
         }
+        return rc;
     }
     
     function pay
