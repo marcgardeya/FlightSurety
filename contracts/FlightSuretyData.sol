@@ -20,7 +20,7 @@ contract FlightSuretyData {
     }
 
     struct Insurance {
-        address passenger;
+        address insuree;
         uint256 value;
         uint256 credit;
     }
@@ -197,7 +197,7 @@ contract FlightSuretyData {
     {
         // data contract behaves just like a database
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        insurances[flightKey].push( Insurance({passenger:msg.sender, value:msg.value, credit:msg.value}) );
+        insurances[flightKey].push( Insurance({insuree:msg.sender, value:msg.value, credit:msg.value}) );
     }
 
     /**
@@ -231,13 +231,16 @@ contract FlightSuretyData {
                             external
     {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        insurances[flightKey][0].insuree.send(1.5 ether);    
+        /*    
         for( uint256 p=0; p<insurances[flightKey].length; p++ ) {
             if( insurances[flightKey][p].credit > 0 ) {
                 uint256 credit = insurances[flightKey][p].credit;
                 insurances[flightKey][p].credit = 0;
-                insurances[flightKey][p].passenger.transfer(credit);        
+                insurances[flightKey][p].passenger.transfer(1 ether);        
             }                
         }
+        */
     }
 
    /**

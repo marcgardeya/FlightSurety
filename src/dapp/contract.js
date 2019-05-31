@@ -65,7 +65,7 @@ export default class Contract {
         } 
         self.flightSuretyApp.methods
             .buyInsurance(payload.airline, payload.flight, payload.timestamp)
-            .send({ from: self.owner, value:value*(new BigNumber(10)).pow(18)}, (error, result) => {
+            .send({ from: self.passengers[0], value:value*(new BigNumber(10)).pow(18)}, (error, result) => {
                 callback(error, result);
             });
     }
@@ -79,7 +79,7 @@ export default class Contract {
         } 
         self.flightSuretyApp.methods
             .pay(payload.airline, payload.flight, payload.timestamp)
-            .send({ from: self.owner }, (error, result) => {
+            .send({from:self.flightSuretyApp.address}, (error, result) => {
                 callback(error, result);
             });
     }

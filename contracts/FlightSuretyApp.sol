@@ -157,7 +157,7 @@ contract FlightSuretyApp {
                                 uint256 timestamp                            
                             ) external payable
     {
-        // business logic goes to the app contract
+        // business logic goes here in the app contract
         require(msg.value <= 1 ether);
         flightSuretyData.buyInsurance(airline, flight, timestamp);
     }
