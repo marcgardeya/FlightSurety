@@ -79,7 +79,7 @@ export default class Contract {
         } 
         self.flightSuretyApp.methods
             .pay(payload.airline, payload.flight, payload.timestamp)
-            .send({from:self.flightSuretyApp.address}, (error, result) => {
+            .send({from:self.owner}, (error, result) => {
                 callback(error, result);
             });
     }
