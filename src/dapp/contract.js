@@ -42,12 +42,12 @@ export default class Contract {
             .call({ from: self.owner}, callback);
     }
 
-    fetchFlightStatus(flight, callback) {
+    fetchFlightStatus(flight, timestamp, callback) {
         let self = this;
         let payload = {
             airline: self.airlines[0],
             flight: flight,
-            timestamp: Math.floor(Date.now() / 1000)
+            timestamp: timestamp // Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
@@ -75,10 +75,11 @@ export default class Contract {
         let payload = {
             airline: self.airlines[0],
             flight: flight,
-            timestamp: timestamp // Math.floor(Date.now() / 1000)
+            timestamp: timestamp,
+            recipient: '0x3bDb2484B838b1b7aD242541543e0144e19a9158' // Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
-            .pay(payload.airline, payload.flight, payload.timestamp)
+            .pay(payload.airline, payload.flight, payload.timestamp, payload.recipient)
             .send({from:self.owner}, (error, result) => {
                 callback(error, result);
             });

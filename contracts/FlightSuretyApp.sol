@@ -35,6 +35,7 @@ contract FlightSuretyApp {
     }
     mapping(bytes32 => Flight) private flights;
 
+address buyer;
  
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -159,7 +160,12 @@ contract FlightSuretyApp {
     {
         // business logic goes here in the app contract
         require(msg.value <= 1 ether);
-        flightSuretyData.buyInsurance(airline, flight, timestamp);
+        flightSuretyData.buyInsurance.value(msg.value)(airline, flight, timestamp, msg.sender);
+
+        //require(msg.value <= 1 ether);
+        //buyer = msg.sender;
+
+        //flightSuretyData.buyInsurance(airline, flight, timestamp);
     }
     
     function creditInsurees
@@ -172,7 +178,8 @@ contract FlightSuretyApp {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         uint8 statusCode = flights[flightKey].statusCode;
         //if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
-        if(true) {    flightSuretyData.creditInsurees(airline, flight, timestamp);
+        if(true) {
+            flightSuretyData.creditInsurees(airline, flight, timestamp);
             rc = true;
         }
         return rc;
@@ -182,10 +189,13 @@ contract FlightSuretyApp {
                             (                             
                                 address airline,
                                 string flight,
-                                uint256 timestamp                            
+                                uint256 timestamp,
+                                address recipient                            
                             ) external {
 
-        flightSuretyData.pay(airline, flight, timestamp);
+        //buyer.send(0.2 ether);
+
+        flightSuretyData.pay(airline, flight, timestamp, recipient);
     }
 
    /**
@@ -410,7 +420,7 @@ contract FlightSuretyData {
     function isFunded( address airline ) external view returns(bool);
     function registerAirline( address newAirline, address registerinAirline ) external view;
     function addFunding( address airline, uint256 value ) external payable;
-    function buyInsurance(address airline, string flight, uint256 timestamp ) external payable;
+    function buyInsurance(address airline, string flight, uint256 timestamp, address sender) external payable;
     function creditInsurees(address airline, string flight, uint256 timestamp ) external payable;
-    function pay(address airline, string flight, uint256 timestamp ) external payable;
+    function pay(address airline, string flight, uint256 timestamp, address recipient ) external payable;
 }

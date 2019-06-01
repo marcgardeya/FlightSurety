@@ -31,7 +31,7 @@ contract FlightSuretyData {
     mapping(address => Airline) private airlines;                       // Mapping for storing airlines
     uint256 nbVotedAirlines;                                            // Number of participating airlines, i.e. registered, funded and voted
 
-    mapping(bytes32 => Insurance[]) private insurances;
+    mapping(bytes32 => Insurance) private insurances;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -189,7 +189,8 @@ contract FlightSuretyData {
                             (        
                                 address airline,
                                 string flight,
-                                uint256 timestamp
+                                uint256 timestamp,
+                                address sender
                             )
                             external
                             payable
@@ -197,7 +198,14 @@ contract FlightSuretyData {
     {
         // data contract behaves just like a database
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        insurances[flightKey].push( Insurance({insuree:msg.sender, value:msg.value, credit:msg.value}) );
+
+        insurances[flightKey].insuree = sender;
+        insurances[flightKey].value   = msg.value;
+        
+        //insurances[flightKey].push( Insurance({insuree:msg.sender, value:msg.value, credit:msg.value}) );
+        //Insurance memory flightInsurance = Insurance({insuree:msg.sender, value:msg.value, credit:msg.value});
+        //Insurance[] flightInsurances = insurances[flightKey];        
+        //flightInsurances.push(flightInsurance);
     }
 
     /**
@@ -212,9 +220,7 @@ contract FlightSuretyData {
                                 external
     {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        for( uint256 p=0; p<insurances[flightKey].length; p++ ) {
-            insurances[flightKey][p].credit = insurances[flightKey][p].value + insurances[flightKey][p].value / 2;        
-        }
+        insurances[flightKey].credit = insurances[flightKey].value.mul(15).div(10);
     }
     
 
@@ -226,18 +232,25 @@ contract FlightSuretyData {
                             (
                                     address airline,
                                     string flight,
-                                    uint256 timestamp
+                                    uint256 timestamp,
+                                    address recipient
                             )
                             external
     {
+        //recipient.transfer(0.2 ether);
+
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        insurances[flightKey][0].insuree.send(1.5 ether);    
-        /*    
+        insurances[flightKey].credit = insurances[flightKey].value.mul(15).div(10);
+        if( insurances[flightKey].credit > 0 ) {
+            insurances[flightKey].insuree.send(insurances[flightKey].credit);  
+        }
+
+        /*
         for( uint256 p=0; p<insurances[flightKey].length; p++ ) {
             if( insurances[flightKey][p].credit > 0 ) {
                 uint256 credit = insurances[flightKey][p].credit;
                 insurances[flightKey][p].credit = 0;
-                insurances[flightKey][p].passenger.transfer(1 ether);        
+                insurances[flightKey][p].insuree.send(credit);        
             }                
         }
         */
