@@ -75,11 +75,10 @@ export default class Contract {
         let payload = {
             airline: self.airlines[0],
             flight: flight,
-            timestamp: timestamp,
-            recipient: '0x3bDb2484B838b1b7aD242541543e0144e19a9158' // Math.floor(Date.now() / 1000)
+            timestamp: timestamp // Math.floor(Date.now() / 1000)
         } 
         self.flightSuretyApp.methods
-            .pay(payload.airline, payload.flight, payload.timestamp, payload.recipient)
+            .pay(payload.airline, payload.flight, payload.timestamp)
             .send({from:self.owner}, (error, result) => {
                 callback(error, result);
             });

@@ -232,8 +232,7 @@ contract FlightSuretyData {
                             (
                                     address airline,
                                     string flight,
-                                    uint256 timestamp,
-                                    address recipient
+                                    uint256 timestamp
                             )
                             external
     {
@@ -242,7 +241,7 @@ contract FlightSuretyData {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         //insurances[flightKey].credit = insurances[flightKey].value.mul(15).div(10);
         if( insurances[flightKey].credit > 0 ) {
-            insurances[flightKey].insuree.send(insurances[flightKey].credit);  
+            insurances[flightKey].insuree.transfer(insurances[flightKey].credit);  
         }
 
         /*

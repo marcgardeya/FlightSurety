@@ -13,6 +13,17 @@ To install, download or clone the repo, then:
 
 ## Develop Client
 
+To run purchase/withdrawal test:
+
+- Open Ganache and check balance of account #7
+- Open Dapp and wait for operational status 'true'
+- Hit 'Buy insurance' to purchase insurance
+- Do it again to increase contract funding (this is a workaround)
+- Check account #7 for balance reduced by 2 ether
+- Hit 'Fetch status from oracles'
+- Hit 'Withdraw refund'
+- Check account #7 for balance increased by 1.5 ether
+
 To run truffle tests:
 
 `truffle test ./test/flightSurety.js`

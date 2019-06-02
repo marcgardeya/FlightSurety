@@ -174,26 +174,25 @@ address buyer;
                                 string flight,
                                 uint256 timestamp                            
                             ) public returns(bool rc) {
-        rc = false;
-        bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        uint8 statusCode = flights[flightKey].statusCode;
+        //bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        //uint8 statusCode = flights[flightKey].statusCode;
         //if( (statusCode == STATUS_CODE_LATE_AIRLINE) || (statusCode == STATUS_CODE_LATE_TECHNICAL) ) {
-        flightSuretyData.creditInsurees(airline, flight, timestamp);
-        rc = true;
-        return rc;
+        if(true) {
+            flightSuretyData.creditInsurees(airline, flight, timestamp);
+            return true;
+        }
+        return false;
     }
     
     function pay
                             (                             
                                 address airline,
                                 string flight,
-                                uint256 timestamp,
-                                address recipient                            
+                                uint256 timestamp
                             ) external {
 
         creditInsurees(airline, flight, timestamp);
-
-        flightSuretyData.pay(airline, flight, timestamp, recipient);
+        flightSuretyData.pay(airline, flight, timestamp);
     }
 
    /**
@@ -246,7 +245,7 @@ address buyer;
     uint256 public constant REGISTRATION_FEE = 1 ether;
 
     // Number of oracles that must respond for valid status
-    uint256 private constant MIN_RESPONSES = 2;
+    uint256 private constant MIN_RESPONSES = 3;
 
 
     struct Oracle {
@@ -328,7 +327,7 @@ address buyer;
                         )
                         external
     {
-        //require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) || (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
+        require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) || (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
 
 
         bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp)); 
@@ -339,13 +338,13 @@ address buyer;
         // Information isn't considered verified until at least MIN_RESPONSES
         // oracles respond with the *** same *** information
         emit OracleReport(airline, flight, timestamp, statusCode);
-        //if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
+        if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
 
-            //emit FlightStatusInfo(airline, flight, timestamp, statusCode);
+            emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
             processFlightStatus(airline, flight, timestamp, statusCode);
-        //}
+        }
     }
 
 
@@ -420,5 +419,5 @@ contract FlightSuretyData {
     function addFunding( address airline, uint256 value ) external payable;
     function buyInsurance(address airline, string flight, uint256 timestamp, address sender) external payable;
     function creditInsurees(address airline, string flight, uint256 timestamp ) external payable;
-    function pay(address airline, string flight, uint256 timestamp, address recipient ) external payable;
+    function pay(address airline, string flight, uint256 timestamp ) external payable;
 }
