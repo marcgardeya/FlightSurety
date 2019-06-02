@@ -240,7 +240,7 @@ contract FlightSuretyData {
         //recipient.transfer(0.2 ether);
 
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
-        insurances[flightKey].credit = insurances[flightKey].value.mul(15).div(10);
+        //insurances[flightKey].credit = insurances[flightKey].value.mul(15).div(10);
         if( insurances[flightKey].credit > 0 ) {
             insurances[flightKey].insuree.send(insurances[flightKey].credit);  
         }
