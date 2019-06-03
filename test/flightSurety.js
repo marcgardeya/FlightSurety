@@ -263,8 +263,6 @@ contract('Flight Surety Tests', async (accounts) => {
     let passenger = accounts[6];
 
     await config.flightSuretyApp.buyInsurance.sendTransaction(config.firstAirline, "LH1", 0 , {from: passenger, value:1*config.weiMultiple});
-    await config.flightSuretyApp.creditInsurees.sendTransaction(config.firstAirline, "LH1", 0);
-    await config.flightSuretyApp.pay.sendTransaction(config.firstAirline, "LH1", 0);
   });
 
   });
