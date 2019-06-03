@@ -26,8 +26,7 @@ To run purchase/withdrawal test:
 
 To run truffle tests:
 
-`truffle test ./test/flightSurety.js`
-`truffle test ./test/oracles.js`
+`truffle test`
 
 To use the dapp:
 
